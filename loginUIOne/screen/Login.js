@@ -13,12 +13,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import * as Animatable from "react-native-animatable";
 
 const Login = ({ navigation }) => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passowrdShow, setPasswordShow] = useState(false);
 
-  const checkEmail = () => {
-    if (email.length > 0) {
+  const checkUsername = () => {
+    if (username.length > 0) {
       return true;
     } else {
       return false;
@@ -39,21 +39,21 @@ const Login = ({ navigation }) => {
           <Animatable.View animation="bounceIn" style={styles.closeButton}>
             <TouchableOpacity
               onPress={() => {
-                navigation.goBack();
+                navigation.navigate("SplashPage");
               }}
             >
-              <AntDesign name="closecircleo" size={18} color="black" />
+              <AntDesign name="closecircleo" size={20} color="black" />
             </TouchableOpacity>
           </Animatable.View>
-          <Text style={styles.textFooter}>E-MAIL</Text>
+          <Text style={styles.textFooter}>Username</Text>
           <View style={styles.action}>
             <FontAwesome name="user-o" color="#05375a" size={20}></FontAwesome>
             <TextInput
-              placeholder="Your Email ..."
+              placeholder="Your  Username..."
               style={styles.textInput}
-              onChangeText={(val) => setEmail(val)}
+              onChangeText={(val) => setUsername(val)}
             ></TextInput>
-            {checkEmail() ? (
+            {checkUsername() ? (
               <Animatable.View animation="bounceIn">
                 <Feather name="check-circle" color="green" size={20}></Feather>
               </Animatable.View>
@@ -63,7 +63,7 @@ const Login = ({ navigation }) => {
           <View style={styles.action}>
             <Feather name="lock" color="#05375a" size={20}></Feather>
             <TextInput
-              placeholder="Your Email ..."
+              placeholder="Your Password ..."
               style={styles.textInput}
               onChangeText={(val) => setPassword(val)}
               secureTextEntry={!passowrdShow}
@@ -186,8 +186,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   closeButton: {
-    flex: 1,
     alignItems: "flex-end",
     justifyContent: "center",
+    // position: "absolute",
+    // right: 17,
+    // top: 25,
   },
 });
