@@ -6,8 +6,6 @@ import {
   ImageBackground,
   Dimensions,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { FontAwesome, Feather, AntDesign } from "@expo/vector-icons";
 import ScrollableTabView, {
   DefaultTabBar,
 } from "react-native-scrollable-tab-view";
@@ -32,7 +30,7 @@ const Home = () => {
         <ScrollableTabView
           style={{ marginTop: 20 }}
           initialPage={1}
-          tabBarTextStyle={{ color: "green" }}
+          tabBarActiveTextColor="green"
           renderTabBar={() => (
             <DefaultTabBar
               underlineStyle={{ backgroundColor: "green" }}
