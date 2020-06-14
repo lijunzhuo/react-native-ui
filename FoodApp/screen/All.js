@@ -1,46 +1,57 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, FlatList, Image } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  Image,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { AntDesign } from "@expo/vector-icons";
-import { render } from "react-dom";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
 
-const All = () => {
+const All = ({ navigation }) => {
+  const [allData, setAllData] = useState([]);
   const [data, setData] = useState([]);
+  const [searchText, setSearchText] = useState("");
+
+  let inputData = [
+    {
+      name: "Stewed Mushrooms",
+      image: require("../assets/namkho.jpg"),
+      rating: 3,
+      price: "$12",
+    },
+    {
+      name: "Jackfruit Fired",
+      image: require("../assets/mitkho.jpg"),
+      rating: 5,
+      price: "$15",
+    },
+    {
+      name: "Noodles",
+      image: require("../assets/hutieu.jpg"),
+      rating: 4,
+      price: "$20",
+    },
+    {
+      name: "Beef",
+      image: require("../assets/cuonlalot.jpg"),
+      rating: 2,
+      price: "$12",
+    },
+    {
+      name: "Salad dressing",
+      image: require("../assets/cuondiep.jpg"),
+      rating: 5,
+      price: "$10",
+    },
+  ];
 
   useEffect(() => {
-    setData([
-      {
-        name: "Stewed Mushrooms",
-        image: require("../assets/namkho.jpg"),
-        rating: 3,
-        price: "$12",
-      },
-      {
-        name: "Jackfruit Fired",
-        image: require("../assets/mitkho.jpg"),
-        rating: 5,
-        price: "$15",
-      },
-      {
-        name: "Noodles",
-        image: require("../assets/hutieu.jpg"),
-        rating: 4,
-        price: "$20",
-      },
-      {
-        name: "Beef",
-        image: require("../assets/cuonlalot.jpg"),
-        rating: 2,
-        price: "$12",
-      },
-      {
-        name: "Salad dressing",
-        image: require("../assets/cuondiep.jpg"),
-        rating: 5,
-        price: "$10",
-      },
-    ]);
+    setData(inputData);
+    setAllData(inputData);
   }, []);
 
   renderRating = (item) => {
@@ -78,7 +89,16 @@ const All = () => {
             </View>
           </View>
         </View>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() =>
+            navigation.navigate("Detail", {
+              image: item.image,
+              price: item.price,
+              name: item.name,
+            })
+          }
+        >
           <AntDesign name="arrowright" color="green" size={15}></AntDesign>
         </TouchableOpacity>
       </LinearGradient>
@@ -89,8 +109,33 @@ const All = () => {
     return <View style={{ height: 10 }}></View>;
   };
 
+  search = (text) => {
+    let result = [];
+    result = allData.filter((item) => item.name.includes(text));
+    setData(result);
+  };
+
   return (
     <View style={styles.container}>
+      <View style={styles.section}>
+        <TextInput
+          placeholder="Search"
+          style={{ flex: 1, marginLeft: 10, fontSize: 15 }}
+          value={searchText}
+          onChangeText={(val) => {
+            setSearchText(val);
+            search(val);
+          }}
+        />
+        <TouchableOpacity
+          onPress={() => {
+            setSearchText("");
+            setData(allData);
+          }}
+        >
+          <Ionicons name="ios-close" color="gray" size={20}></Ionicons>
+        </TouchableOpacity>
+      </View>
       <View style={styles.flateList}>
         <FlatList
           data={data}
@@ -168,5 +213,15 @@ const styles = StyleSheet.create({
   priceText: {
     color: "green",
     fontWeight: "bold",
+  },
+  section: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 100,
+    backgroundColor: "#f2f2f2",
+    marginTop: 20,
+    marginBottom: 10,
   },
 });

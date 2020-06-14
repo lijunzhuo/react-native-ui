@@ -14,7 +14,7 @@ import All from "./All";
 import Popular from "./Popular";
 // var ScrollableTabView = require('react-native-scrollable-tab-view');
 
-const Home = () => {
+const Home = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -37,9 +37,9 @@ const Home = () => {
             ></DefaultTabBar>
           )}
         >
-          <All tabLabel="All" />
-          <Menu tabLabel="Menu" />
-          <Popular tabLabel="Popular" />
+          <All tabLabel="All" navigation={navigation} />
+          <Menu tabLabel="Menu" navigation={navigation} />
+          <Popular tabLabel="Popular" navigation={navigation} />
         </ScrollableTabView>
       </View>
     </View>

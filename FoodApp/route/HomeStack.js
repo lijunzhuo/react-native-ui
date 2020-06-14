@@ -16,7 +16,7 @@ const HomeStack = () => {
         component={Home}
       ></HomeStackNavigator.Screen>
       <HomeStackNavigator.Screen
-        name="Screen"
+        name="Detail"
         component={Detail}
       ></HomeStackNavigator.Screen>
     </HomeStackNavigator.Navigator>
