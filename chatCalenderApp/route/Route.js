@@ -18,6 +18,20 @@ export default function Route() {
     }
   };
 
+  const getData = async (key, callback) => {
+    try {
+      AsyncStorage.getItem(key).then((value) => {
+        if (value !== null) {
+          callback(value);
+        } else {
+          console.log("cannot get Token-Data: " + key);
+        }
+      });
+    } catch (e) {
+      console.log("cannot get Token-Data: " + key);
+    }
+  };
+
   const [loginState, dispatch] = useReducer(loginReducer, initLoginState);
 
   const authContext = useMemo(() => {

@@ -7,12 +7,16 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
+  Button,
+  SafeAreaView,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Animatable from "react-native-animatable";
 import { Feather, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
 import { AuthContext } from "../common/Login/context";
+import AsyncStorage from "@react-native-community/async-storage";
+import Modal from "react-native-modal";
 
 const LoginScreen = ({ navigation }) => {
   const { loginState, loginAction } = useContext(AuthContext);
@@ -24,9 +28,38 @@ const LoginScreen = ({ navigation }) => {
   const [isValidUser, setIsValidateUser] = useState(false);
   const [isValidPassword, setisValidPassword] = useState(false);
   const [secureTextEntry, setSecureTextEntry] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const storeData = async (key, value, callback) => {
+    try {
+      await AsyncStorage.setItem(key, value, callback);
+    } catch (e) {
+      console.log("data cannot be stored");
+    }
+  };
+
+  const getData = async (key, callback) => {
+    try {
+      AsyncStorage.getItem(key).then((value) => {
+        if (value !== null) {
+          callback(value);
+        } else {
+          console.log("cannot get Token-Data: " + key);
+        }
+      });
+    } catch (e) {
+      console.log("cannot get Token-Data: " + key);
+    }
+  };
 
   const loginHandle = (email, password) => {
     console.log(email, password);
+    if (rememberMe) {
+      storeData(
+        "USER_INFO",
+        JSON.stringify({ email, password, userToken: "12345", rememberMe })
+      );
+    }
     loginAction.signIn(email, password);
     //navigation.navigate("Main");
   };
@@ -37,7 +70,28 @@ const LoginScreen = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    getData("USER_INFO", (value) => {
+      const userInfo = JSON.parse(value);
+      if (userInfo.email) {
+        setEmail(userInfo.email);
+      }
+      if (userInfo.password) {
+        setPassword(userInfo.password);
+      }
+      if (userInfo.rememberMe) {
+        setRememberMe(true);
+      }
+      if (
+        userInfo.email.trim().length > 0 &&
+        userInfo.password.trim().length > 0 &&
+        userInfo.rememberMe
+      ) {
+        console.log("yes");
+        loginAction.signIn(userInfo.email, userInfo.password);
+      }
+    });
+  }, []);
 
   return (
     <TouchableWithoutFeedback
@@ -59,6 +113,7 @@ const LoginScreen = ({ navigation }) => {
               placeholderTextColor="#666666"
               style={[styles.textInput]}
               autoCapitalize="none"
+              value={email}
               onChangeText={(val) => setEmail(val)}
               onEndEditing={(e) => handleValidUser(e.nativeEvent.text)}
             />
@@ -85,6 +140,7 @@ const LoginScreen = ({ navigation }) => {
               secureTextEntry={secureTextEntry ? true : false}
               style={[styles.textInput]}
               autoCapitalize="none"
+              value={password}
               onChangeText={(val) => setPassword(val)}
             />
             <TouchableOpacity
@@ -131,7 +187,11 @@ const LoginScreen = ({ navigation }) => {
             >
               Remember Me
             </Text>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setIsModalVisible(!isModalVisible);
+              }}
+            >
               <Text
                 style={{
                   color: "#ff8c00",
@@ -217,6 +277,28 @@ const LoginScreen = ({ navigation }) => {
             </TouchableOpacity>
           </View> */}
         </Animatable.View>
+        <Modal
+          testID={"modal"}
+          isVisible={isModalVisible}
+          customBackdrop={
+            <SafeAreaView style={styles.customBackdrop}>
+              <Text style={styles.customBackdropText}>
+                I'm in the backdrop! 👋
+              </Text>
+            </SafeAreaView>
+          }
+        >
+          <View style={styles.content}>
+            <Text style={styles.contentTitle}>Hi 👋!</Text>
+            <Button
+              testID={"close-button"}
+              onPress={() => {
+                setIsModalVisible(false);
+              }}
+              title="Close"
+            />
+          </View>
+        </Modal>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -291,5 +373,26 @@ const styles = StyleSheet.create({
   textSign: {
     fontSize: 18,
     fontWeight: "bold",
+  },
+  customBackdrop: {
+    flex: 1,
+    backgroundColor: "#87BBE0",
+    alignItems: "center",
+  },
+  customBackdropText: {
+    marginTop: 10,
+    fontSize: 17,
+  },
+  content: {
+    backgroundColor: "white",
+    padding: 22,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 4,
+    borderColor: "rgba(0, 0, 0, 0.1)",
+  },
+  contentTitle: {
+    fontSize: 20,
+    marginBottom: 12,
   },
 });

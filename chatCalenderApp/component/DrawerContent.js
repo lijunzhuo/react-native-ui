@@ -48,6 +48,19 @@ export default function CustomDrawerContent({
     }
   };
 
+  const removeData = async (key, callback) => {
+    try {
+      AsyncStorage.removeItem(key, callback);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const signOutHandler = () => {
+    removeData("USER_INFO");
+    loginAction.signOut();
+  };
+
   useEffect(() => {
     getData("TOKEN", (value) => {
       console.log(value);
@@ -200,7 +213,7 @@ export default function CustomDrawerContent({
             return <FontAwesome name="sign-out" size={20} color="grey" />;
           }}
           onPress={() => {
-            loginAction.signOut();
+            signOutHandler();
           }}
         ></DrawerItem>
       </Drawer.Section>
